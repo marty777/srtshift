@@ -16,6 +16,8 @@ def parse_timestamp(timestamp):
 	return (hours * 3600000) + (minutes * 60000) + (seconds * 1000) + millis
 	
 def format_timestamp(milliseconds):
+	if milliseconds < 0:
+		milliseconds = 0
 	hours = int(milliseconds / 3600000)
 	milliseconds -= hours * 3600000
 	minutes = int(milliseconds / 60000)

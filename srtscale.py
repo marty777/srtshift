@@ -75,9 +75,7 @@ def main():
 	
 	millis_const = 0
 	millis_coefficient = 0.0
-	# due to precision issues, storing coefficient as fraction
-	millis_coefficient_numerator = 0
-	millis_coefficient_denominator = 0
+	
 	
 	if args.timecode1curr and not args.timecode2curr:
 		millis_const = args.timecode1new - args.timecode1curr
@@ -87,8 +85,6 @@ def main():
 		
 		millis_const = args.timecode1new - args.timecode1curr
 		if args.timecode1curr != args.timecode2curr:
-			millis_coefficient_numerator = args.timecode2new - args.timecode2curr - millis_const
-			millis_coefficient_denominator = args.timecode2curr - args.timecode1curr
 			millis_coefficient = float(args.timecode2new - args.timecode2curr - millis_const) / float(args.timecode2curr - args.timecode1curr)
 	
 	linebuffer = list()

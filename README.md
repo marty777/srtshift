@@ -35,16 +35,16 @@ usage: srtscale.py [-h] [--outfile OUTFILE] [--timecode1curr TIMECODE1CURR]
 	optional arguments:
 	  -h, --help            show this help message and exit
 	  --outfile OUTFILE     A destination .srt file. If not provided, output will
-					be dumped to stdout
+				be dumped to stdout
 	  --timecode1curr TIMECODE1CURR
-					A timecode (in the format HH:MM:SS,MMM) near the start
-					of the existing .srt file
+				A timecode (in the format HH:MM:SS,MMM) near the start
+				of the existing .srt file
 	  --timecode1new TIMECODE1NEW
-					The desired timecode (in the format HH:MM:SS,MMM) that
-					TIMECODE1CURR should be updated to in the output file
+				The desired timecode (in the format HH:MM:SS,MMM) that
+				TIMECODE1CURR should be updated to in the output file
 	  --timecode2curr TIMECODE2CURR
-					A timecode (in the format HH:MM:SS,MMM) near the end
-					of the existing .srt file
+				A timecode (in the format HH:MM:SS,MMM) near the end
+				of the existing .srt file
 	  --timecode2new TIMECODE2NEW
-					The desired timecode (in the format HH:MM:SS,MMM) that
-					TIMECODE2CURR should be updated to in the output file
+				The desired timecode (in the format HH:MM:SS,MMM) that
+				TIMECODE2CURR should be updated to in the output file

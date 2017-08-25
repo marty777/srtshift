@@ -8,6 +8,7 @@
 import argparse
 import sys
 
+
 def parse_timestamp(timestamp):
 	hours = int(timestamp[0:2])
 	minutes = int(timestamp[3:5])
@@ -36,24 +37,40 @@ def outfunc(outhandle, outstring):
 		print(outstring, end='')
 	else:
 		outhandle.write(outstring)
-	
-parser = argparse.ArgumentParser()
-parser.add_argument('inputfile', type=argparse.FileType('r'),
-					help='Your source .srt file')
-parser.add_argument('--outfile', default=False, type=argparse.FileType('w'),
-					help='A destination .srt file. If not provided, output will be dumped to stdout')
-parser.add_argument('--timeshift', default=0, type=int,
-					help='The number of milliseconds, positive or negative, to shift all timecodes in the input file.')
 
-args = parser.parse_args()
+def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('inputfile', type=argparse.FileType('r'),
+						help='Your source .srt file')
+	parser.add_argument('--outfile', default=False, type=argparse.FileType('w'),
+						help='A destination .srt file. If not provided, output will be dumped to stdout')
+	parser.add_argument('--timeshift', default=0, type=int,
+						help='The number of milliseconds, positive or negative, to shift all timecodes in the input file.')
 
-millis = args.timeshift
-linebuffer = list()
-linecount = 0
+	args = parser.parse_args()
 
-for line in args.inputfile:
-	linecount += 1
-	if len(line.strip()) == 0:
+	millis = args.timeshift
+	linebuffer = list()
+	linecount = 0
+
+	for line in args.inputfile:
+		linecount += 1
+		if len(line.strip()) == 0:
+			outfunc(args.outfile, linebuffer[0])
+			timestamps = linebuffer[1].split(' --> ')
+			if len(timestamps) != 2 or not is_timestamp(timestamps[0]) or not is_timestamp(timestamps[1]) :
+				sys.exit('Error around line ' + str(linecount) +': Could not parse '+linebuffer[1]+' as timestamps')
+			outfunc(args.outfile, format_timestamp(parse_timestamp(timestamps[0]) + millis) + ' --> ' + format_timestamp(parse_timestamp(timestamps[1]) + millis) + '\n')
+			for i in range(2, len(linebuffer)):
+				outfunc(args.outfile, linebuffer[i])
+			outfunc(args.outfile, '\n')
+			del linebuffer[:]
+			
+		else:
+			linebuffer.append(line)
+
+	#clear any remaining lines in buffer
+	if len(linebuffer) > 1:
 		outfunc(args.outfile, linebuffer[0])
 		timestamps = linebuffer[1].split(' --> ')
 		if len(timestamps) != 2 or not is_timestamp(timestamps[0]) or not is_timestamp(timestamps[1]) :
@@ -62,23 +79,11 @@ for line in args.inputfile:
 		for i in range(2, len(linebuffer)):
 			outfunc(args.outfile, linebuffer[i])
 		outfunc(args.outfile, '\n')
-		del linebuffer[:]
 		
-	else:
-		linebuffer.append(line)
+	args.inputfile.close()
+	if(args.outfile):
+		print ('Complete. ' + str(linecount) + ' lines processed with a timestamp shift of ' + str(millis) + ' milliseconds')
+		args.outfile.close()
 
-#clear any remaining lines in buffer
-if len(linebuffer) > 1:
-	outfunc(args.outfile, linebuffer[0])
-	timestamps = linebuffer[1].split(' --> ')
-	if len(timestamps) != 2 or not is_timestamp(timestamps[0]) or not is_timestamp(timestamps[1]) :
-		sys.exit('Error around line ' + str(linecount) +': Could not parse '+linebuffer[1]+' as timestamps')
-	outfunc(args.outfile, format_timestamp(parse_timestamp(timestamps[0]) + millis) + ' --> ' + format_timestamp(parse_timestamp(timestamps[1]) + millis) + '\n')
-	for i in range(2, len(linebuffer)):
-		outfunc(args.outfile, linebuffer[i])
-	outfunc(args.outfile, '\n')
-	
-args.inputfile.close()
-if(args.outfile):
-	print ('Complete. ' + str(linecount) + ' lines processed with a timestamp shift of ' + str(millis) + ' milliseconds')
-	args.outfile.close()
+
+sys.exit(main())

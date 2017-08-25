@@ -19,7 +19,8 @@ Shifts all timecodes in the file by a constant specified amount
 						The number of milliseconds, positive or negative, to
 						shift all timecodes in the input file.
 						
-#srtscale
+
+## srtscale
 
 Intended to be used in cases when subtitles and video drift out of alignment over time (for example, if the framerate of the video file is slightly lower or higher than the source of the subtitles). Locate two timecodes, ideally near the start and end of the video, and specify their current and desired times. Somewhat inaccurate for large changes.
 

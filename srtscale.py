@@ -44,11 +44,9 @@ def outfunc(outhandle, outstring):
 	else:
 		outhandle.write(outstring)
 
-
-def adjust_timestamp(timestamp, a, b):
-	return timestamp + int(a + timestamp*b)
+def adjust_timestamp(timestamp, a, b, offset):
+	return timestamp + int(a + (timestamp - offset)*b)
 	
-		
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('inputfile', type=argparse.FileType('r'),
@@ -75,18 +73,18 @@ def main():
 	
 	millis_const = 0
 	millis_coefficient = 0.0
-	
+	millis_x_offset = 0
 	
 	if args.timecode1curr and not args.timecode2curr:
 		millis_const = args.timecode1new - args.timecode1curr
 	elif args.timecode2curr and not args.timecode1curr:
 		millis_const = args.timecode2new - args.timecode2curr
 	elif args.timecode1curr and args.timecode2curr:
-		
 		millis_const = args.timecode1new - args.timecode1curr
 		if args.timecode1curr != args.timecode2curr:
 			millis_coefficient = float(args.timecode2new - args.timecode2curr - millis_const) / float(args.timecode2curr - args.timecode1curr)
-	
+		millis_x_offset = args.timecode1curr
+		
 	linebuffer = list()
 	linecount = 0
 	
@@ -97,7 +95,7 @@ def main():
 			timestamps = linebuffer[1].split(' --> ')
 			if len(timestamps) != 2 or not is_timestamp(timestamps[0]) or not is_timestamp(timestamps[1]) :
 				sys.exit('Error around line ' + str(linecount) +': Could not parse '+linebuffer[1]+' as timestamps')
-			outfunc(args.outfile, format_timestamp(adjust_timestamp(parse_timestamp(timestamps[0]), millis_const, millis_coefficient)) + ' --> ' + format_timestamp(adjust_timestamp(parse_timestamp(timestamps[1]), millis_const, millis_coefficient)) + '\n')
+			outfunc(args.outfile, format_timestamp(adjust_timestamp(parse_timestamp(timestamps[0]), millis_const, millis_coefficient, millis_x_offset)) + ' --> ' + format_timestamp(adjust_timestamp(parse_timestamp(timestamps[1]), millis_const, millis_coefficient, millis_x_offset)) + '\n')
 			for i in range(2, len(linebuffer)):
 				outfunc(args.outfile, linebuffer[i])
 			outfunc(args.outfile, '\n')
@@ -112,7 +110,7 @@ def main():
 		timestamps = linebuffer[1].split(' --> ')
 		if len(timestamps) != 2 or not is_timestamp(timestamps[0]) or not is_timestamp(timestamps[1]) :
 			sys.exit('Error around line ' + str(linecount) +': Could not parse '+linebuffer[1]+' as timestamps')
-		outfunc(args.outfile, format_timestamp(adjust_timestamp(parse_timestamp(timestamps[0]), millis_const, millis_coefficient)) + ' --> ' + format_timestamp(adjust_timestamp(parse_timestamp(timestamps[1]), millis_const, millis_coefficient)) + '\n')
+		outfunc(args.outfile, format_timestamp(adjust_timestamp(parse_timestamp(timestamps[0]), millis_const, millis_coefficient, millis_x_offset)) + ' --> ' + format_timestamp(adjust_timestamp(parse_timestamp(timestamps[1]), millis_const, millis_coefficient, millis_x_offset)) + '\n')
 		for i in range(2, len(linebuffer)):
 			outfunc(args.outfile, linebuffer[i])
 		outfunc(args.outfile, '\n')
@@ -121,6 +119,5 @@ def main():
 	if(args.outfile):
 		print ('Complete. ' + str(linecount) + ' lines processed')
 		args.outfile.close()
-
 
 sys.exit(main())

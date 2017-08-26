@@ -1,9 +1,9 @@
 # srtshift
-Python 3 command line app to fix misaligned timecodes on SubRib .srt subtitle files
+Python 3 command line app to fix misaligned timecodes on SubRib .srt subtitle files.
 
 ## srtshift
 	
-Shifts all timecodes in the file by a constant specified amount
+Shifts all timecodes in the file by a constant specified amount.
 
 	usage: srtshift.py [-h] [--outfile OUTFILE] [--timeshift TIMESHIFT] inputfile
 
@@ -22,7 +22,7 @@ Shifts all timecodes in the file by a constant specified amount
 
 ## srtscale
 
-Intended to be used in cases when subtitles and video drift out of alignment over time (for example, if the framerate of the video file is slightly lower or higher than the source of the subtitles). Locate two timecodes, ideally near the start and end of the video, and specify their current and desired times. Somewhat inaccurate for large changes.
+Intended to be used in cases when subtitles and video drift out of alignment over time (for example, if the framerate of the video file is slightly lower or higher than the source of the subtitles). Locate two timecodes, ideally near the start and end of the video, and specify their current and desired times. All other timecodes in the file will be interpolated from these two sample points.
 
 	usage: srtscale.py [-h] [--outfile OUTFILE] [--timecode1curr TIMECODE1CURR]
                    [--timecode1new TIMECODE1NEW]
